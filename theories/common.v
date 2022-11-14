@@ -371,3 +371,16 @@ apply: mk_SOR_addon.
 Qed.
 
 End RealField.
+
+Definition int_Ring := Eval hnf in [the ringType of int : Type].
+Definition Z_ringType := Eval hnf in [the ringType of Z : Type].
+
+Definition GRing_Ring__to__GRing_Zmodule : ringType -> zmodType := id.
+Definition GRing_UnitRing__to__GRing_Ring : unitRingType -> ringType := id.
+Definition GRing_Field__to__GRing_UnitRing : fieldType -> unitRingType := id.
+
+Module MorphSort.
+Import GRing.
+Definition Additive U V := @Additive.apply U V (Phant (U -> V)).
+Definition RMorphism U V := @RMorphism.apply U V (Phant (U -> V)).
+End MorphSort.

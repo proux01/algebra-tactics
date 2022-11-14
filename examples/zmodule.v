@@ -399,6 +399,11 @@ Ltac morph_zmodule_reflection V VarMap ME1 ME2 ZE1 ZE2 :=
   apply: (@AG_correct V VarMap ZE1 ZE2);
   [vm_compute; reflexivity].
 
+Module MorphSort.
+Import GRing.
+Definition Additive U V := @Additive.apply U V (Phant (U -> V)).
+End MorphSort.
+
 Elpi Tactic morph_zmodule.
 Elpi Accumulate lp:{{
 
@@ -423,8 +428,8 @@ quote V F {{ @subr lp:V' lp:In1 lp:In2 }}
   coq.unify-eq V V' ok, !,
   quote V F In1 OutM1 Out1 VarMap, quote V F In2 OutM2 Out2 VarMap.
 quote V F In {{ @MMorph lp:U lp:V lp:G lp:OutM }} Out VarMap :-
-  coq.unify-eq {{ @GRing.Additive.apply lp:U lp:V lp:Ph lp:G lp:In1 }} In ok, !,
-  quote U (x\ F {{ @GRing.Additive.apply lp:U lp:V lp:Ph lp:G lp:x }})
+  coq.unify-eq {{ @MorphSort.Additive lp:U lp:V lp:G lp:In1 }} In ok, !,
+  quote U (x\ F {{ @MorphSort.Additive lp:U lp:V lp:G lp:x }})
         In1 OutM Out VarMap.
 quote V F In {{ @MX lp:V lp:In }} {{ AGX lp:N }} VarMap :- !,
   mem VarMap (F In) N.

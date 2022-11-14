@@ -59,10 +59,11 @@ pred carrier->type i:carrier, o:term.
 carrier->type (carrier _ _ _ _ _ _ _ Ty) Ty :- !.
 
 pred field->unitRing o:term, o:term.
-field->unitRing F R :- !, coq.unify-eq {{ GRing.Field.unitRingType lp:F }} R ok.
+field->unitRing F R :- !,
+  coq.unify-eq {{ GRing_Field__to__GRing_UnitRing lp:F }} R ok.
 
 pred ring->zmod o:term, o:term.
-ring->zmod R V :- !, coq.unify-eq {{ GRing.Ring.zmodType lp:R }} V ok.
+ring->zmod R V :- !, coq.unify-eq {{ GRing_Ring__to__GRing_Zmodule lp:R }} V ok.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Parse goal (and hypotheses) to extract a realFieldType or realDomainType
@@ -205,7 +206,7 @@ quote.expr Inv R F TR TUR Morph {{ @intmul lp:U lp:In1 lp:In2 }}
   ring->zmod R U, !,
   quote.expr Inv R F TR TUR Morph In1 OutM1 Out1 VM, !,
   quote.expr Inv {{ int_Ring }} none TR TUR
-    (n\ {{ @intmul (GRing.Ring.zmodType lp:TR) (@GRing.one lp:TR) lp:n }})
+    (n\ {{ @intmul (GRing_Ring__to__GRing_Zmodule lp:TR) (@GRing.one lp:TR) lp:n }})
     In2 OutM2 Out2 VM.
 % 1%R
 quote.expr _ R _ _ _ _ {{ @GRing.one lp:R' }}
@@ -233,8 +234,7 @@ quote.expr Inv R (some F) TR TUR Morph {{ @GRing.inv lp:R' lp:In }}
 % morphisms
 quote.expr Inv R _ TR TUR Morph In
            {{ @RMorph lp:R' lp:R lp:NewMorphInst lp:OutM }} Out VM :-
-  NewMorph = (x\ {{ @GRing.RMorphism.apply
-                      lp:R' lp:R _ lp:NewMorphInst lp:x }}),
+  NewMorph = (x\ {{ @MorphSort.RMorphism lp:R' lp:R lp:NewMorphInst lp:x }}),
   coq.unify-eq In (NewMorph In1) ok, !,
   quote.expr Inv R' { ring->field R' } TR TUR (x\ Morph (NewMorph x)) In1
     OutM Out VM.

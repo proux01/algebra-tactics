@@ -108,7 +108,7 @@ quote.nat R {{ expn lp:In1 lp:In2 }} {{ NExp lp:OutM1 lp:OutM2 }} Out VarMap :-
   quote.nat R In1 OutM1 Out1 VarMap, !,
   quote.expr.exp Out1 Out2 Out.
 quote.nat R In {{ NX lp:In }} Out VarMap :- !,
-  Zmodule = {{ GRing.Ring.zmodType lp:R }},
+  Zmodule = {{ GRing_Ring__to__GRing_Zmodule lp:R }},
   mem VarMap {{ @GRing.natmul lp:Zmodule (@GRing.one lp:R) lp:In }} N, !,
   quote.expr.variable { positive-constant {calc (N + 1)} } Out.
 pred quote.count-succ i:term, o:int, o:term.
@@ -156,13 +156,14 @@ quote.zmod U R Morph {{ @intmul lp:U' lp:In1 lp:In2 }}
   quote.zmod U R Morph In1 OutM1 Out1 VarMap, !,
   quote.ring
     {{ int_Ring }} none R
-    (n\ {{ @intmul (GRing.Ring.zmodType lp:R) (@GRing.one lp:R) lp:n }})
+    (n\ {{ @intmul (GRing_Ring__to__GRing_Zmodule lp:R)
+                   (@GRing.one lp:R) lp:n }})
     In2 OutM2 Out2 VarMap, !,
   quote.expr.mul Out1 Out2 Out.
 % additive functions
 quote.zmod U R Morph In
            {{ @ZMMorph lp:V lp:U lp:NewMorphInst lp:OutM }} Out VarMap :-
-  NewMorph = (x\ {{ @GRing.Additive.apply lp:V lp:U _ lp:NewMorphInst lp:x }}),
+  NewMorph = (x\ {{ @MorphSort.Additive lp:V lp:U lp:NewMorphInst lp:x }}),
   coq.unify-eq In (NewMorph In1) ok, !,
   % TODO: for concrete additive functions, should we unpack [NewMorph]?
   quote.zmod V R (x\ Morph (NewMorph x)) In1 OutM Out VarMap.
@@ -184,56 +185,57 @@ pred quote.ring i:term, i:option term, i:term, i:(term -> term),
                 i:term, o:term, o:term, o:list term.
 % 0%R
 quote.ring R _ _ _ {{ @GRing.zero lp:U }} {{ @R0 lp:R }} Out _ :-
-  coq.unify-eq U {{ GRing.Ring.zmodType lp:R }} ok, !,
+  coq.unify-eq U {{ GRing_Ring__to__GRing_Zmodule lp:R }} ok, !,
   quote.expr.zero Out.
 % -%R
 quote.ring R F TR Morph {{ @GRing.opp lp:U lp:In1 }}
            {{ @ROpp lp:R lp:OutM1 }} Out VarMap :-
-  coq.unify-eq U {{ GRing.Ring.zmodType lp:R }} ok, !,
+  coq.unify-eq U {{ GRing_Ring__to__GRing_Zmodule lp:R }} ok, !,
   quote.ring R F TR Morph In1 OutM1 Out1 VarMap, !,
   quote.expr.opp Out1 Out.
 % Z.opp
 quote.ring R none TR Morph
            {{ Z.opp lp:In1 }} {{ @RZOpp lp:OutM1 }} Out VarMap :-
-  coq.unify-eq {{ ZInstances.Z_ringType }} R ok, !,
+  coq.unify-eq {{ Z_ringType }} R ok, !,
   quote.ring R none TR Morph In1 OutM1 Out1 VarMap, !,
   quote.expr.opp Out1 Out.
 % +%R
 quote.ring R F TR Morph {{ @GRing.add lp:U lp:In1 lp:In2 }}
            {{ @RAdd lp:R lp:OutM1 lp:OutM2 }} Out VarMap :-
-  coq.unify-eq U {{ GRing.Ring.zmodType lp:R }} ok, !,
+  coq.unify-eq U {{ GRing_Ring__to__GRing_Zmodule lp:R }} ok, !,
   quote.ring R F TR Morph In1 OutM1 Out1 VarMap, !,
   quote.ring R F TR Morph In2 OutM2 Out2 VarMap, !,
   quote.expr.add Out1 Out2 Out.
 % Z.add
 quote.ring R none TR Morph {{ Z.add lp:In1 lp:In2 }}
            {{ @RZAdd lp:OutM1 lp:OutM2 }} Out VarMap :-
-  coq.unify-eq {{ ZInstances.Z_ringType }} R ok, !,
+  coq.unify-eq {{ Z_ringType }} R ok, !,
   quote.ring R none TR Morph In1 OutM1 Out1 VarMap, !,
   quote.ring R none TR Morph In2 OutM2 Out2 VarMap, !,
   quote.expr.add Out1 Out2 Out.
 % Z.sub
 quote.ring R none TR Morph {{ Z.sub lp:In1 lp:In2 }}
            {{ @RZSub lp:OutM1 lp:OutM2 }} Out VarMap :-
-  coq.unify-eq {{ ZInstances.Z_ringType }} R ok, !,
+  coq.unify-eq {{ Z_ringType }} R ok, !,
   quote.ring R none TR Morph In1 OutM1 Out1 VarMap, !,
   quote.ring R none TR Morph In2 OutM2 Out2 VarMap, !,
   quote.expr.sub Out1 Out2 Out.
 % (_ *+ _)%R
 quote.ring R F TR Morph {{ @GRing.natmul lp:U lp:In1 lp:In2 }}
            {{ @RMuln lp:R lp:OutM1 lp:OutM2 }} Out VarMap :-
-  coq.unify-eq U {{ @GRing.Ring.zmodType lp:R }} ok, !,
+  coq.unify-eq U {{ @GRing_Ring__to__GRing_Zmodule lp:R }} ok, !,
   quote.ring R F TR Morph In1 OutM1 Out1 VarMap, !,
   quote.nat TR In2 OutM2 Out2 VarMap, !,
   quote.expr.mul Out1 Out2 Out.
 % (_ *~ _)%R
 quote.ring R F TR Morph {{ @intmul lp:U lp:In1 lp:In2 }}
            {{ @RMulz lp:R lp:OutM1 lp:OutM2 }} Out VarMap :-
-  coq.unify-eq U {{ @GRing.Ring.zmodType lp:R }} ok, !,
+  coq.unify-eq U {{ @GRing_Ring__to__GRing_Zmodule lp:R }} ok, !,
   quote.ring R F TR Morph In1 OutM1 Out1 VarMap, !,
   quote.ring
     {{ int_Ring }} none TR
-    (n\ {{ @intmul (GRing.Ring.zmodType lp:TR) (@GRing.one lp:TR) lp:n }})
+    (n\ {{ @intmul (GRing_Ring__to__GRing_Zmodule lp:TR)
+                   (@GRing.one lp:TR) lp:n }})
     In2 OutM2 Out2 VarMap, !,
   quote.expr.mul Out1 Out2 Out.
 % 1%R
@@ -250,7 +252,7 @@ quote.ring R F TR Morph {{ @GRing.mul lp:R' lp:In1 lp:In2 }}
 % Z.mul
 quote.ring R none TR Morph {{ Z.mul lp:In1 lp:In2 }}
            {{ @RZMul lp:OutM1 lp:OutM2 }} Out VarMap :-
-  coq.unify-eq {{ ZInstances.Z_ringType }} R ok, !,
+  coq.unify-eq {{ Z_ringType }} R ok, !,
   quote.ring R none TR Morph In1 OutM1 Out1 VarMap, !,
   quote.ring R none TR Morph In2 OutM2 Out2 VarMap, !,
   quote.expr.mul Out1 Out2 Out.
@@ -265,14 +267,14 @@ quote.ring R F TR Morph {{ @exprz lp:R' lp:In1 lp:In2 }} OutM Out VarMap :-
   quote.icstr In2 Pos OutM2 Out2,
   if (Pos = tt)
      (CONT =
-       (coq.unify-eq {{ GRing.UnitRing.ringType lp:R' }} R ok, !,
+       (coq.unify-eq {{ GRing_UnitRing__to__GRing_Ring lp:R' }} R ok, !,
         quote.ring R F TR Morph In1 OutM1 Out1 VarMap, !,
         OutM = {{ @RExpPosz lp:R' lp:OutM1 lp:OutM2 }}, !,
         quote.expr.exp Out1 Out2 Out))
      (CONT =
        (field-mode,
         F = some F',
-        coq.unify-eq R' {{ GRing.Field.unitRingType lp:F' }} ok, !,
+        coq.unify-eq R' {{ GRing_Field__to__GRing_UnitRing lp:F' }} ok, !,
         quote.ring R F TR Morph In1 OutM1 Out1 VarMap, !,
         OutM = {{ @RExpNegz lp:F' lp:OutM1 lp:OutM2 }}, !,
         Out = {{ @FEinv Z (@FEpow Z lp:Out1 lp:Out2) }})),
@@ -280,7 +282,7 @@ quote.ring R F TR Morph {{ @exprz lp:R' lp:In1 lp:In2 }} OutM Out VarMap :-
 % Z.pow
 quote.ring R none TR Morph {{ Z.pow lp:In1 lp:In2 }}
            {{ @RZExp lp:OutM1 lp:OutM2 }} Out VarMap :-
-  coq.unify-eq {{ ZInstances.Z_ringType }} R ok,
+  coq.unify-eq {{ Z_ringType }} R ok,
   reduction-Z In2 OutM2, !,
   ((((OutM2 = {{ Z0 }}, !, Out2 = {{ N0 }}); % If [In2] is non-negative
      (OutM2 = {{ Zpos lp:P }}, !, Out2 = {{ Npos lp:P }})), !,
@@ -291,7 +293,7 @@ quote.ring R none TR Morph {{ Z.pow lp:In1 lp:In2 }}
 quote.ring R (some F) TR Morph {{ @GRing.inv lp:R' lp:In1 }}
            {{ @RInv lp:F lp:OutM1 }} {{ @FEinv Z lp:Out1 }} VarMap :-
   field-mode,
-  coq.unify-eq R' {{ GRing.Field.unitRingType lp:F }} ok, !,
+  coq.unify-eq R' {{ GRing_Field__to__GRing_UnitRing lp:F }} ok, !,
   quote.ring R (some F) TR Morph In1 OutM1 Out1 VarMap.
 % Posz
 quote.ring R _ TR _ {{ Posz lp:In }} {{ @RPosz lp:OutM }} Out VarMap :-
@@ -304,14 +306,13 @@ quote.ring R _ TR _ {{ Negz lp:In }} {{ @RNegz lp:OutM1 }} Out VarMap :-
   quote.expr.opp { quote.expr.add { quote.expr.one } Out1 } Out.
 % Z constants
 quote.ring R _ _ _ In {{ @RZC lp:In }} Out _ :-
-  coq.unify-eq {{ ZInstances.Z_ringType }} R ok,
+  coq.unify-eq {{ Z_ringType }} R ok,
   ground-Z In, !,
   quote.expr.constant In Out.
 % morphisms
 quote.ring R _ TR Morph In
            {{ @RMorph lp:Q lp:R lp:NewMorphInst lp:OutM }} Out VarMap :-
-  NewMorph = (x\ {{ @GRing.RMorphism.apply
-                      lp:Q lp:R _ lp:NewMorphInst lp:x }}),
+  NewMorph = (x\ {{ @MorphSort.RMorphism lp:Q lp:R lp:NewMorphInst lp:x }}),
   coq.unify-eq In (NewMorph In1) ok,
   !,
   % TODO: for concrete morphisms, should we unpack [NewMorph]?
@@ -320,8 +321,8 @@ quote.ring R _ TR Morph In
 quote.ring R _ TR Morph In
            {{ @RMorph' lp:U lp:R lp:NewMorphInst lp:OutM }} Out VarMap :-
   NewMorph =
-    (x\ {{ @GRing.Additive.apply
-             lp:U (GRing.Ring.zmodType lp:R) _ lp:NewMorphInst lp:x }}),
+    (x\ {{ @MorphSort.Additive lp:U (GRing_Ring__to__GRing_Zmodule lp:R)
+             lp:NewMorphInst lp:x }}),
   coq.unify-eq In (NewMorph In1) ok,
   !,
   % TODO: for concrete additive functions, should we unpack [NewMorph]?
