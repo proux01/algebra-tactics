@@ -77,13 +77,13 @@ ground-uint {{ Number.UIntDecimal lp:D }} :- !, ground-decimal D.
 ground-uint {{ Number.UIntHexadecimal lp:D }} :- !, ground-hexadecimal D.
 
 pred reduction-pos i:term, o:term.
-reduction-pos I O :- coq.reduction.vm.norm I {{ positive }} O, ground-pos O.
+reduction-pos I O :- coq.reduction.cbv.norm I O, ground-pos O.
 
 pred reduction-N i:term, o:term.
-reduction-N I O :- coq.reduction.vm.norm I {{ N }} O, ground-N O.
+reduction-N I O :- coq.reduction.cbv.norm I O, ground-N O.
 
 pred reduction-Z i:term, o:term.
-reduction-Z I O :- coq.reduction.vm.norm I {{ Z }} O, ground-Z O.
+reduction-Z I O :- coq.reduction.cbv.norm I O, ground-Z O.
 
 pred negb i:bool, o:bool.
 negb tt ff :- !.
