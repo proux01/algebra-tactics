@@ -9,6 +9,7 @@ From mathcomp.algebra_tactics Extra Dependency "common.elpi" as common.
 From mathcomp.algebra_tactics Extra Dependency "ring.elpi" as ring.
 From mathcomp.algebra_tactics Extra Dependency "ring_tac.elpi" as ring_tac.
 From mathcomp.algebra_tactics Extra Dependency "field_tac.elpi" as field_tac.
+Set SsrOldRewriteGoalsOrder.  (* change Set to Unset when porting the file, then remove the line when requiring MathComp >= 2.6 *)
 
 Import GRing.Theory.
 

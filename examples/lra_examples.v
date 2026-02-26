@@ -1,5 +1,6 @@
 From mathcomp Require Import all_ssreflect ssralg ssrnum ssrint rat.
 From mathcomp Require Import lra.
+Set SsrOldRewriteGoalsOrder.  (* change Set to Unset when porting the file, then remove the line when requiring MathComp >= 2.6 *)
 
 Local Open Scope ring_scope.
 

@@ -8,6 +8,7 @@ From mathcomp.zify Require Import ssrZ zify.
 From mathcomp.algebra_tactics Require Import common.
 From mathcomp.algebra_tactics Extra Dependency "common.elpi" as common.
 From mathcomp.algebra_tactics Extra Dependency "lra.elpi" as lra.
+Set SsrOldRewriteGoalsOrder.  (* change Set to Unset when porting the file, then remove the line when requiring MathComp >= 2.6 *)
 
 Import Order.TTheory GRing.Theory Num.Theory.
 
