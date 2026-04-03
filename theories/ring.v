@@ -1,6 +1,6 @@
 From mathcomp Require all_algebra. (* Remove this line when requiring Rocq > 9.1 *)
 From elpi Require Import elpi.
-From Coq Require Import ZArith Ring Ring_polynom Field_theory.
+From Stdlib Require Import ZArith Ring Ring_polynom Field_theory.
 From mathcomp Require Import ssreflect ssrfun ssrbool eqtype ssrnat choice seq.
 From mathcomp Require Import fintype finfun bigop order ssralg ssrnum ssrint.
 From mathcomp.zify Require Import ssrZ zify.
