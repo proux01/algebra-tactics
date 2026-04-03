@@ -1,7 +1,7 @@
 From mathcomp Require all_algebra. (* Remove this line when requiring Rocq > 9.1 *)
 From elpi Require Import elpi.
-From Coq Require Import PeanoNat BinNat Zbool QArith.
-From Coq.micromega Require Import OrderedRing RingMicromega.
+From Stdlib Require Import PeanoNat BinNat Zbool QArith.
+From Stdlib.micromega Require Import OrderedRing RingMicromega.
 From mathcomp Require Import all_ssreflect ssralg ssrnum ssrint.
 From mathcomp.zify Require Import ssrZ zify.
 
